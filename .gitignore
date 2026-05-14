@@ -1,0 +1,33 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# TensorFlow / Keras
+*.h5
+logs/
+models/*.h5
+
+# Dataset (too large for git)
+5_behavioural_coloning/dataset/
+3_road_sign_classification/original_dataset/
+3_road_sign_classification/modified_dataset/
