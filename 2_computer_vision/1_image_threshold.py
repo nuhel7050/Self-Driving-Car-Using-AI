@@ -1,4 +1,8 @@
-"""Image Tresholding"""
+"""Image thresholding for lane marker detection.
+
+Demonstrates manual per-pixel color thresholding in HSV space
+to isolate yellow lane markings from a simulated camera image.
+"""
 
 import numpy as np
 import matplotlib.pyplot as plt

@@ -1,3 +1,9 @@
+"""Utility functions for the behavioral cloning pipeline.
+
+Provides image acquisition from the Webots camera, model loading,
+image preprocessing (normalization), and a performance profiler.
+"""
+
 import os
 import cv2
 import numpy as np
@@ -29,6 +35,7 @@ def profile(fnc):
 
 
 def get_image_rgb(camera):
+    """Capture an RGB image from the Webots camera as a NumPy array."""
     raw_image = camera.getImage()  # This function takes most of the CPU time
     image = np.frombuffer(raw_image, np.uint8).reshape(
         (camera.getHeight(), camera.getWidth(), 4)
@@ -38,6 +45,7 @@ def get_image_rgb(camera):
 
 
 def get_latest_file_path(folder):
+    """Return the path of the most recently modified file in a directory."""
     file_paths = [f for f in folder.iterdir() if os.path.isfile(f)]
 
     file_paths_sorted = sorted(
@@ -50,6 +58,19 @@ def get_latest_file_path(folder):
 
 
 def get_model(folder, model_id, verbose=True):
+    """Load a saved Keras model by ID or latest.
+
+    Args:
+        folder: Path to the models directory.
+        model_id: Integer model number, string filename, or -1 for latest.
+        verbose: Whether to print the loaded model name.
+
+    Returns:
+        Loaded TensorFlow/Keras model.
+
+    Raises:
+        Exception: If the models folder does not exist.
+    """
     if isinstance(model_id, str):
         model_path = folder / model_id
     else:
@@ -71,6 +92,7 @@ def get_model(folder, model_id, verbose=True):
 
 
 def preprocess_images(images):
+    """Normalize image pixel values from [0, 255] to [0.0, 1.0]."""
     # Convert from integers to floats
     images_norm = images.astype("float32")
     # Normalize

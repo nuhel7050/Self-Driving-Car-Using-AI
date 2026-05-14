@@ -1,4 +1,9 @@
-"""radar automated controller."""
+"""Automated LiDAR-based collision avoidance controller for Webots.
+
+Uses the Sick LMS 291 2D laser scanner to detect obstacles, converts
+range data to a bird's-eye-view image, identifies collision points,
+and computes a steering angle to navigate between them.
+"""
 
 from controller import Display
 from vehicle import Car
@@ -9,6 +14,7 @@ ROW_HIT = 32
 
 # @utils.profile
 def main():
+    """Run the automated collision avoidance loop in Webots."""
     # Create the Robot instance.
     robot = Car()
     driver = Driver()
@@ -84,7 +90,7 @@ def main():
 
         if len(collision_index) < 2:
             collision_index = np.array([64, 64])  # to go straight
-            print("WARNIG: less that two hit points")
+            print("WARNING: less than two hit points")
 
         # Calculate waypoint
         waypoint_col = int(np.average(collision_index))

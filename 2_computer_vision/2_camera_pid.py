@@ -1,4 +1,9 @@
-"""camera_pid controller."""
+"""PID-based camera lane-following controller for Webots.
+
+Uses HSV color thresholding to detect yellow lane markings, computes
+the centroid offset as a normalized steering signal, and applies
+proportional control to keep the vehicle centered in the lane.
+"""
 
 from controller import Display
 from vehicle import Car

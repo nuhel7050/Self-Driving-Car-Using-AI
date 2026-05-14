@@ -1,3 +1,10 @@
+"""Computer vision utilities for Webots camera-based lane detection.
+
+Provides image acquisition from the Webots camera, color thresholding
+(manual and OpenCV-based), centroid calculation for PID steering, and
+a display function for debugging the binary threshold image.
+"""
+
 from numpy.lib.function_base import average
 from controller import Robot
 from controller import Camera
@@ -30,6 +37,7 @@ def profile(fnc):
 
 
 def get_image(camera):
+    """Capture a raw BGRA image from the Webots camera as a NumPy array."""
     raw_image = camera.getImage()  # This function takes most of the CPU time
     image = np.frombuffer(raw_image, np.uint8).reshape(
         (camera.getHeight(), camera.getWidth(), 4)
@@ -38,11 +46,13 @@ def get_image(camera):
 
 
 def pixel_difference(pixel1, pixel2):
+    """Compute Euclidean distance between two pixel color values."""
     squared_dist = np.sum((pixel1 - pixel2) ** 2, axis=0)
     return np.sqrt(squared_dist)
 
 
 def colour_threshold(image, colour):
+    """Apply manual per-pixel color thresholding to produce a binary mask."""
     binary_image = np.zeros(image.shape, dtype=np.uint8)
     binary_image[:][:][4] = 255  # alpha channel
     for r in range(image.shape[0]):
@@ -55,6 +65,16 @@ def colour_threshold(image, colour):
 
 
 def colour_threshold_cv2(image, colour, error):
+    """Apply HSV color thresholding using OpenCV inRange.
+
+    Args:
+        image: BGR input image.
+        colour: HSV center values.
+        error: HSV tolerance range.
+
+    Returns:
+        Binary mask where pixels within range are 255.
+    """
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     lower = colour - error / 2
@@ -65,6 +85,12 @@ def colour_threshold_cv2(image, colour, error):
 
 
 def calculate_normalized_average_col(binary_image):
+    """Calculate the normalized average column position of white pixels.
+
+    Returns:
+        Tuple of (normalized_column, average_column). normalized_column
+        is in [-0.5, 0.5] range. Returns (None, None) if no white pixels.
+    """
     th_idx = np.where(binary_image == 255)
 
     if not th_idx:
@@ -80,6 +106,7 @@ def calculate_normalized_average_col(binary_image):
 
 
 def display_binary_image(display_th, binary_image, average_column):
+    """Render the binary threshold image on a Webots Display with a red center line."""
     # Image to display
     binary_image_gbra = np.dstack(
         (
@@ -101,7 +128,7 @@ def display_binary_image(display_th, binary_image, average_column):
         height=binary_image_gbra.shape[0],
     )
     display_th.imagePaste(image_ref, 0, 0, False)
-    # NOTE: last argument is "blend" Flase is faster (just copy)
+    # NOTE: last argument is "blend". False is faster (just copy)
 
 
 if __name__ == "__main__":

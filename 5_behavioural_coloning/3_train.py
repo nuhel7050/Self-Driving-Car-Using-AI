@@ -1,3 +1,13 @@
+"""Train a CNN for behavioral cloning (steering angle classification).
+
+Loads camera images and their associated steering labels from the
+dataset folder, one-hot encodes steering direction (left/straight/right),
+trains a convolutional neural network, and saves the model to disk.
+
+Usage:
+    python 3_train.py
+"""
+
 import os
 import cv2
 import random
@@ -13,6 +23,20 @@ import utils
 
 
 def load_dataset(dataset_folder, shuffle=True, balanced=False):
+    """Load images and steering labels from the dataset directory.
+
+    Each sample is a JSON file referencing an image path and a steering
+    angle. Images are preprocessed (normalized to [0, 1]) and labels
+    are one-hot encoded into [left, straight, right].
+
+    Args:
+        dataset_folder: Path to the dataset directory.
+        shuffle: Whether to randomize sample order.
+        balanced: Whether to subsample to balance class distribution.
+
+    Returns:
+        Tuple of (X_train, X_test, y_train, y_test) numpy arrays.
+    """
     X = []
     y = []
     json_files = [el for el in dataset_folder.iterdir() if el.suffix == ".json"]
