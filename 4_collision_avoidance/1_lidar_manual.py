@@ -1,4 +1,8 @@
-"""radar controller."""
+"""Manual LiDAR visualization controller for Webots.
+
+Renders a bird's-eye-view of the Sick LMS 291 LiDAR range data while
+allowing manual driving via Xbox gamepad or keyboard (WASD/arrows).
+"""
 
 from controller import Display
 from vehicle import Car

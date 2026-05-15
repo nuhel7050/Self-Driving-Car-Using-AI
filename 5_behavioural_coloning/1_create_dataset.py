@@ -1,4 +1,9 @@
-"""create_database controller."""
+"""Dataset collection controller for behavioral cloning.
+
+Drives the Webots vehicle manually via gamepad/keyboard while
+recording camera images and steering commands (angle, throttle)
+as JSON files for training the behavioral cloning CNN.
+"""
 
 import os
 import shutil
@@ -20,7 +25,7 @@ def main():
     # Get the time step of the current vworld.
     timestep = int(robot.getBasicTimeStep())
 
-    # Create camear instance
+    # Create camera instance
     camera = robot.getDevice("camera")
     camera.enable(timestep)  # timestep
 
@@ -52,7 +57,7 @@ def main():
         driver.setSteeringAngle(angle)
         driver.setCruisingSpeed(throttle)
 
-        # Don't save files if the vehcile is not moving
+        # Don't save files if the vehicle is not moving
         if throttle == 0:
             continue
 

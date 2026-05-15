@@ -1,3 +1,9 @@
+"""Input controllers for manual vehicle driving in Webots.
+
+Provides Xbox gamepad and keyboard input handlers with dead-zone
+correction and automatic fallback from gamepad to keyboard.
+"""
+
 from inputs import get_gamepad
 import math
 import threading
@@ -6,6 +12,7 @@ import pynput.keyboard as keyboard
 
 
 def sign(value):
+    """Return +1 for non-negative values, -1 for negative."""
     if value >= 0:
         return 1
     else:
@@ -13,6 +20,7 @@ def sign(value):
 
 
 class XboxController(object):
+    """Xbox gamepad input handler with threaded event monitoring."""
     MAX_TRIG_VAL = math.pow(2, 8)
     MAX_JOY_VAL = math.pow(2, 15)
 
@@ -121,6 +129,7 @@ class XboxController(object):
 
 
 class KeyboardController(object):
+    """Keyboard input handler using pynput for arrow/WASD key control."""
     def __init__(self, y_limits=[-1, 1], x_limits=[-1, 1], debug=False):
         self.currently_pressed_key = None
         self.y_limits = y_limits
@@ -258,6 +267,7 @@ class KeyboardController(object):
 
 
 class XboxOrKeyboardController(object):
+    """Automatic input controller with gamepad-to-keyboard fallback."""
     def __init__(self):
         try:
             get_gamepad()

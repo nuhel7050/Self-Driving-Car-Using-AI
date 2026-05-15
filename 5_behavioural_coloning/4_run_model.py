@@ -1,5 +1,8 @@
-"""run_model controller
-Uses trained model to drive the vehicle automatically"""
+"""Autonomous driving controller using a trained behavioral cloning model.
+
+Loads a pre-trained CNN and uses camera images to predict steering
+angles in real-time. Supports manual override via gamepad/keyboard.
+"""
 
 from vehicle import Car
 from vehicle import Driver
@@ -12,6 +15,19 @@ MODEL_ID = "model_sm_1.h5"  # if -1 latest
 
 
 def image_to_angle(model, image, gain=0.25):
+    """Predict a steering angle from a camera image using the trained model.
+
+    Supports both regression (single-output) and classification
+    (left/straight/right) model architectures.
+
+    Args:
+        model: Loaded Keras model.
+        image: Raw camera image as a NumPy array.
+        gain: Steering magnitude for classification mode.
+
+    Returns:
+        Predicted steering angle (float).
+    """
     # Preprocess image
     image = utils.preprocess_images(image)
 
@@ -46,7 +62,7 @@ def main():
     # Get the time step of the current vworld.
     timestep = int(robot.getBasicTimeStep())
 
-    # Create camear instance
+    # Create camera instance
     camera = robot.getDevice("camera")
     camera.enable(timestep)  # timestep
 
@@ -57,7 +73,7 @@ def main():
     current_folder = Path(__file__).parent
     models_folder = current_folder / "models"
     if not models_folder.exists():
-        raise Exception("Missing models foler")
+        raise Exception("Missing models folder")
 
     model = utils.get_model(models_folder, MODEL_ID)
 

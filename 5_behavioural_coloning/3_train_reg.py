@@ -1,3 +1,12 @@
+"""Train a CNN for behavioral cloning (continuous steering regression).
+
+Similar to 3_train.py but uses MSE loss for continuous angle prediction
+instead of classification. Outputs a single steering angle value.
+
+Usage:
+    python 3_train_reg.py
+"""
+
 import os
 import cv2
 import random
@@ -12,6 +21,15 @@ import utils
 
 
 def load_dataset(dataset_folder, shuffle=True):
+    """Load images and continuous steering labels from the dataset.
+
+    Args:
+        dataset_folder: Path to the dataset directory.
+        shuffle: Whether to randomize sample order.
+
+    Returns:
+        Tuple of (X_train, X_test, y_train, y_test) numpy arrays.
+    """
     X = []
     y = []
     json_files = [el for el in dataset_folder.iterdir() if el.suffix == ".json"]

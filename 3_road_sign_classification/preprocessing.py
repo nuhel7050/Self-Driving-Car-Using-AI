@@ -1,3 +1,13 @@
+"""Road sign dataset preprocessing pipeline.
+
+Loads the Kaggle Road Sign Detection dataset, parses XML annotations,
+crops and resizes sign images to a standard shape, and splits into
+train/test sets. Supports caching via pickle serialization.
+
+Dataset: https://www.kaggle.com/andrewmvd/road-sign-detection
+Classes (4): speedlimit, trafficlight, crosswalk, stop
+"""
+
 import os
 from pathlib import Path
 import xml.dom.minidom
@@ -11,8 +21,8 @@ import pickle
 # Dataset --> https://www.kaggle.com/andrewmvd/road-sign-detection
 # Classes (4) --> speedlimit, trafficlight, crosswalk, stop
 
-# Prameters
-SEED = 123  # for reprducibility
+# Parameters
+SEED = 123  # for reproducibility
 DATASET_FOLDER = Path(__file__).parent / "original_dataset"
 ANNOTATIONS_FOLDER = DATASET_FOLDER / "annotations"
 IMAGES_FOLDER = DATASET_FOLDER / "images"
@@ -90,6 +100,17 @@ def crop_image(image, x_min, x_max, y_min, y_max):
 
 
 def read_dataset(overwrite=False, standar_size=True, store_images=True):
+    """Read raw dataset, crop sign regions, and return image/label lists.
+
+    Args:
+        overwrite: Whether to overwrite existing cropped images.
+        standar_size: Whether to resize crops to STANDARD_SHAPE.
+        store_images: Whether to save cropped images to disk.
+
+    Returns:
+        Tuple of (X, y) where X is a list of image arrays and
+        y is a list of class label strings.
+    """
     # Annotation files list
     annotation_files = [f for f in ANNOTATIONS_FOLDER.iterdir() if f.is_file()]
 
@@ -157,6 +178,14 @@ def read_dataset(overwrite=False, standar_size=True, store_images=True):
 
 
 def get_dataset(recompute=False):
+    """Load or compute the preprocessed dataset with train/test split.
+
+    Caches the dataset to disk as a pickle file. On subsequent calls,
+    loads from cache unless recompute=True.
+
+    Returns:
+        Tuple of (X_train, X_test, y_train, y_test).
+    """
     # Check if already has been generated
     dataset_file = MODIFIED_DATASET_FOLDER / "dataset.pickle"
     if dataset_file.exists() and not recompute:
@@ -183,6 +212,7 @@ def get_dataset(recompute=False):
 
 
 def dict_of_classes(X_train, y_train):
+    """Group training images by class label into a dictionary."""
     output = {}
 
     for img, label in zip(X_train, y_train):
